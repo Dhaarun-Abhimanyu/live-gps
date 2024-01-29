@@ -61,6 +61,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update the trail polyline
         updateTrail(newLocation);
     }
+    // ... (previous code)
+
+function updateLocation(newLocation) {
+    if (userMarker) {
+        // Move the user marker to the new location and change color to blue
+        userMarker.setPosition(newLocation);
+    } else {
+        // Create a new marker for the user with blue color
+        userMarker = new google.maps.Marker({
+            position: newLocation,
+            map: map,
+            title: 'Your Location',
+            icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', // Blue color
+        });
+    }
+
+    // Update the trail polyline
+    updateTrail(newLocation);
+}
+
+// ... (remaining code)
 
     function updateTrail(newLocation) {
         if (!trailPolyline) {
