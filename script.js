@@ -45,23 +45,32 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLocation(location);
     });
 
-    function updateLocation(newLocation) {
-        if (userMarker) {
-            // Move the user marker to the new location
-            userMarker.setPosition(newLocation);
-        } else {
-            // Create a new marker for the user
-            userMarker = new google.maps.Marker({
-                position: newLocation,
-                map: map,
-                title: 'Your Location',
-            });
-        }
-
-        // Update the trail polyline
-        updateTrail(newLocation);
-    }
     // ... (previous code)
+
+function updateLocation(newLocation) {
+    if (userMarker) {
+        // Move the user marker to the new location
+        userMarker.setPosition(newLocation);
+        // Change the color of the user marker to blue
+        userMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+    } else {
+        // Create a new marker for the user with blue color
+        userMarker = new google.maps.Marker({
+            position: newLocation,
+            map: map,
+            title: 'Your Location',
+        });
+
+        // Set the icon to blue
+        userMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+    }
+
+    // Update the trail polyline
+    updateTrail(newLocation);
+}
+
+// ... (remaining code)
+
 
 function updateLocation(newLocation) {
     if (userMarker) {
