@@ -3,10 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 0, lng: 0 },
-        zoom: 2,
+        zoom: 15,
     });
 
     let userMarker;
+    let trailPolyline;
 
     // Ask the user for location permission
     if (navigator.geolocation) {
@@ -19,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Center the map on the user's location
                 map.setCenter(userLocation);
-                map.setZoom(15);
 
                 // Display a pin on the map at the user's location
                 userMarker = new google.maps.Marker({
@@ -33,27 +33,51 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             (error) => {
                 console.error('Error getting user location:', error);
-
-                // Handle geolocation errors here
             },
             { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
         );
     } else {
         console.error('Geolocation is not supported by this browser.');
-
-        // Handle geolocation not supported
     }
 
     // Listen for location updates from the server
     socket.on('updatedLocation', (location) => {
+        updateLocation(location);
+    });
+
+    function updateLocation(newLocation) {
         if (userMarker) {
-            userMarker.setPosition(location);
+            // Move the user marker to the new location
+            userMarker.setPosition(newLocation);
         } else {
+            // Create a new marker for the user
             userMarker = new google.maps.Marker({
-                position: location,
+                position: newLocation,
                 map: map,
                 title: 'Your Location',
             });
         }
-    });
+
+        // Update the trail polyline
+        updateTrail(newLocation);
+    }
+
+    function updateTrail(newLocation) {
+        if (!trailPolyline) {
+            // Create a new polyline for the trail
+            trailPolyline = new google.maps.Polyline({
+                map: map,
+                path: [newLocation],
+                geodesic: true,
+                strokeColor: '#FF0000', // Red color
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+            });
+        } else {
+            // Extend the path of the existing polyline
+            const path = trailPolyline.getPath();
+            path.push(newLocation);
+            trailPolyline.setPath(path);
+        }
+    }
 });
